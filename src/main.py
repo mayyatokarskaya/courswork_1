@@ -1,10 +1,9 @@
 import json
 import os.path
 
-import pandas as pd
 from src.views import process_data
 from src.utils import load_excel
-from src.services import fetch_currency_rates, fetch_stock_prices
+
 
 def load_user_settings(settings_file="user_settings.json"):
     """Загрузка пользовательских настроек из файла JSON."""
@@ -35,12 +34,17 @@ def main():
         return
 
     # Загрузка данных
-    file_path_2 = "data/operations.xlsx"
-    transactions = load_excel(file_path_2)
+    try:
+        data = load_excel("operations.xlsx")
+        print(f"Найдено записей: {len(data)}")
+        print(data.columns)  # Вывод названий столбцов
+        print(data.head())
+    except FileNotFoundError as e:
+        print(e)
 
     # Обработка данных и генерация отчета
     date_str = "2023-10-15"
-    response = process_data(transactions, date_str, currencies, stocks)
+    response = process_data(data, date_str, currencies, stocks)
 
     # Вывод результата
     print("JSON-ответ:")
