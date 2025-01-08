@@ -77,9 +77,6 @@ def fetch_stock_prices(stocks):
             results.append({
                 "stock": stock,
                 "price": data.get("c"),
-                # "open": data.get("o"),
-                # "high": data.get("h"),
-                # "low": data.get("l")
             })
         except requests.exceptions.RequestException as e:
             print(f"Ошибка при получении данных для {stock}: {e}")
@@ -87,19 +84,4 @@ def fetch_stock_prices(stocks):
 
     return results
 
-
-# # Пример вызова:
-# if __name__ == "__main__":
-#     # Пример списка акций
-#     stocks = ["AAPL", "GOOGL", "MSFT", "TSLA", "AMZN"]
-#     print(fetch_stock_prices(stocks))
-#
-#     currencies = ["EUR", "RUB", "GBP"]
-#
-#     # Получение курсов валют
-#     rates = fetch_currency_rates(currencies)
-#
-#     # Вывод результатов
-#     for rate in rates:
-#         print(f"{rate['currency']}: {rate['rate']}")
 

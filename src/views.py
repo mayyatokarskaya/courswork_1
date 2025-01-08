@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from src.utils import filter_data_by_date
 from src.reports import save_excel_report
-from src.services import fetch_currency_rates, fetch_stock_prices
+from src.finance_api_utils import fetch_currency_rates, fetch_stock_prices
 from src.utils import calculate_card_expenses, get_top_transactions
 
 def generate_greeting(hour: int) -> str:
