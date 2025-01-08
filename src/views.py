@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 from src.utils import filter_data_by_date
 from src.reports import save_excel_report
 from src.services import fetch_currency_rates, fetch_stock_prices
@@ -16,8 +15,6 @@ def generate_greeting(hour: int) -> str:
     else:
         return "Доброй ночи"
 
-import json
-
 def prepare_json_response(cards_data, top_transactions, currency_rates, stock_prices):
     """Подготавливает JSON-ответ."""
     response = {
@@ -30,25 +27,17 @@ def prepare_json_response(cards_data, top_transactions, currency_rates, stock_pr
     return json.dumps(response, ensure_ascii=False, indent=4)
 
 def process_data(data, date_str, currencies, stocks):
-    """
-    Обрабатывает данные, фильтрует, рассчитывает расходы и кешбэк, формирует JSON.
-    """
+    """Обрабатывает данные, фильтрует, рассчитывает расходы и кешбэк, формирует JSON"""
     # Фильтруем данные по дате
     filtered_data = filter_data_by_date(data, date_str)
-
     # Анализируем данные
-
-
     cards_data = calculate_card_expenses(filtered_data)
     top_transactions = get_top_transactions(filtered_data)
-
     # Получаем курсы валют и цены акций
     currency_rates = fetch_currency_rates(currencies)
     stock_prices = fetch_stock_prices(stocks)
-
     # Формируем JSON-ответ
     response = prepare_json_response(cards_data, top_transactions, currency_rates, stock_prices)
-
     # Сохраняем отчет в Excel
     save_excel_report(filtered_data, f"report_{date_str}.xlsx")
 

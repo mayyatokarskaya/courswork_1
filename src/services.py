@@ -3,6 +3,8 @@ import os
 import requests
 from dotenv import load_dotenv
 
+load_dotenv()
+
 
 def fetch_currency_rates(currencies, base_currency="USD"):
     """
@@ -51,7 +53,6 @@ def fetch_currency_rates(currencies, base_currency="USD"):
     return results
 
 
-load_dotenv()
 API_KEY_2 = os.getenv("FINNHUB_API_KEY")  # Убедитесь, что ваш .env содержит ключ API
 
 def fetch_stock_prices(stocks):
@@ -87,7 +88,7 @@ def fetch_stock_prices(stocks):
     return results
 
 
-# Пример вызова:
+# # Пример вызова:
 # if __name__ == "__main__":
 #     # Пример списка акций
 #     stocks = ["AAPL", "GOOGL", "MSFT", "TSLA", "AMZN"]
@@ -101,4 +102,4 @@ def fetch_stock_prices(stocks):
 #     # Вывод результатов
 #     for rate in rates:
 #         print(f"{rate['currency']}: {rate['rate']}")
-#
+

@@ -1,25 +1,6 @@
-import json
-import os.path
-
 from src.views import process_data
 from src.utils import load_excel
-
-
-def load_user_settings(settings_file="user_settings.json"):
-    """Загрузка пользовательских настроек из файла JSON."""
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    file_path = os.path.join(base_dir, "settings", settings_file)
-
-    #print(file_path)
-    try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            return json.load(file)
-    except FileNotFoundError:
-        print(f"Файл настроек {settings_file} не найден.")
-        return {}
-    except json.JSONDecodeError:
-        print("Ошибка в формате JSON файла настроек.")
-        return {}
+from src.config import load_user_settings  # Импортируем функцию из config.py
 
 def main():
     # Загружаем настройки пользователя
@@ -41,9 +22,10 @@ def main():
         print(data.head())
     except FileNotFoundError as e:
         print(e)
+        return
 
     # Обработка данных и генерация отчета
-    date_str = "2023-10-15"
+    date_str = "2024-10-15"  # Пример даты
     response = process_data(data, date_str, currencies, stocks)
 
     # Вывод результата
