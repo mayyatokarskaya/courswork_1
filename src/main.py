@@ -17,15 +17,15 @@ def main():
     # Загрузка данных
     try:
         data = load_excel("operations.xlsx")
-        print(f"Найдено записей: {len(data)}")
-        print(data.columns)  # Вывод названий столбцов
-        print(data.head())
+        # print(f"Найдено записей: {len(data)}")
+        # print(data.columns)  # Вывод названий столбцов
+        # print(data.head())
     except FileNotFoundError as e:
         print(e)
         return
 
     # Обработка данных и генерация отчета
-    date_str = "2024-10-15"  # Пример даты
+    date_str = "2021-12-31"  # Используем дату из operations.xlsx
     response = process_data(data, date_str, currencies, stocks)
 
     # Вывод результата
