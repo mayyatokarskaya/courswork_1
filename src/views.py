@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 from src.utils import filter_data_by_date
-from src.reports import save_excel_report
+
 from src.finance_api_utils import fetch_currency_rates, fetch_stock_prices
 from src.utils import calculate_card_expenses, get_top_transactions
 
@@ -57,9 +57,6 @@ def process_data(data, date_str, currencies, stocks):
 
     # Формируем JSON-ответ
     response = prepare_json_response(cards_data, top_transactions, currency_rates, stock_prices, greeting)
-
-    # Сохраняем отчет в Excel
-    save_excel_report(filtered_data, f"report_{date_str}.xlsx")
 
     return response
 
