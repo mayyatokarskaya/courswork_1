@@ -18,15 +18,25 @@ def generate_greeting(hour: int) -> str:
 
 def prepare_json_response(cards_data, top_transactions, currency_rates, stock_prices, greeting):
     """Подготавливает JSON-ответ."""
+    # Преобразуем top_transactions в нужный формат
+    simplified_transactions = [
+        {
+            "date": t["Дата операции"].strftime("%d.%m.%Y") if isinstance(t["Дата операции"], datetime) else t["Дата операции"],
+            "amount": t["Сумма операции"],
+            "category": t["Категория"],
+            "description": t["Описание"],
+        }
+        for t in top_transactions
+    ]
+
     response = {
-        "greeting": greeting,
+        "greeting": f'"{greeting}"',
         "cards": cards_data,
-        "top_transactions": top_transactions,
+        "top_transactions": simplified_transactions,
         "currency_rates": currency_rates,
-        "stock_prices": stock_prices
+        "stock_prices": stock_prices,
     }
     return json.dumps(response, ensure_ascii=False, indent=4)
-
 
 def process_data(data, date_str, currencies, stocks):
     """Обрабатывает данные, фильтрует, рассчитывает расходы и кешбэк, формирует JSON."""

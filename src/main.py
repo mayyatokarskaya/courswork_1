@@ -16,10 +16,7 @@ def main():
 
     # Загрузка данных
     try:
-        data = load_excel("operations.xlsx")
-        # print(f"Найдено записей: {len(data)}")
-        # print(data.columns)  # Вывод названий столбцов
-        # print(data.head())
+        data = load_excel("../data/operations.xlsx")  # Убедитесь, что путь к файлу корректен
     except FileNotFoundError as e:
         print(e)
         return
@@ -28,7 +25,7 @@ def main():
     date_str = "2021-12-31"  # Используем дату из operations.xlsx
     response = process_data(data, date_str, currencies, stocks)
 
-    # Вывод результата
+    # Проверяем и выводим результат
     print("JSON-ответ:")
     print(response)
 
