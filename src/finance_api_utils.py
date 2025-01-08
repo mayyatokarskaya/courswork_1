@@ -22,9 +22,7 @@ def fetch_currency_rates(currencies, base_currency="USD"):
     api_url = f"https://api.apilayer.com/exchangerates_data/latest?base={base_currency}"
 
     # Заголовки с API-ключом
-    headers = {
-        "apikey": API_KEY
-    }
+    headers = {"apikey": API_KEY}
 
     results = []
 
@@ -55,33 +53,28 @@ def fetch_currency_rates(currencies, base_currency="USD"):
 
 API_KEY_2 = os.getenv("FINNHUB_API_KEY")  # Убедитесь, что ваш .env содержит ключ API
 
+
 def fetch_stock_prices(stocks):
-    """
-    Получение цен акций через реальный API Finnhub.
-    :param stocks: список тикеров акций (напр. ["AAPL", "GOOGL"])
-    :return: список словарей с ценами акций
-    """
+    """Получение цен акций через реальный API Finnhub"""
+
     api_url = "https://finnhub.io/api/v1/quote"  # Реальный URL API
     results = []
 
     for stock in stocks:
-        params = {
-            "symbol": stock,  # Символ акции
-            "token": API_KEY_2  # Ваш ключ Finnhub
-        }
+        params = {"symbol": stock, "token": API_KEY_2}  # Символ акции  # Ваш ключ Finnhub
         try:
             response = requests.get(api_url, params=params)
             response.raise_for_status()  # Проверка на успешность запроса
             data = response.json()
             # 'c' — текущая цена, 'o' — цена открытия, 'h' — максимум, 'l' — минимум
-            results.append({
-                "stock": stock,
-                "price": data.get("c"),
-            })
+            results.append(
+                {
+                    "stock": stock,
+                    "price": data.get("c"),
+                }
+            )
         except requests.exceptions.RequestException as e:
             print(f"Ошибка при получении данных для {stock}: {e}")
             results.append({"stock": stock, "price": None})
 
     return results
-
-

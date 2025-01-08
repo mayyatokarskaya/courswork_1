@@ -5,8 +5,9 @@ from src.utils import filter_data_by_date
 from src.finance_api_utils import fetch_currency_rates, fetch_stock_prices
 from src.utils import calculate_card_expenses, get_top_transactions
 
+
 def generate_greeting(hour: int) -> str:
-    """Возвращает приветствие в зависимости от времени суток."""
+    """Возвращает приветствие в зависимости от времени суток"""
     if 6 <= hour < 12:
         return "Доброе утро"
     elif 12 <= hour < 18:
@@ -16,12 +17,17 @@ def generate_greeting(hour: int) -> str:
     else:
         return "Доброй ночи"
 
+
 def prepare_json_response(cards_data, top_transactions, currency_rates, stock_prices, greeting):
-    """Подготавливает JSON-ответ."""
+    """Подготавливает JSON-ответ"""
     # Преобразуем top_transactions в нужный формат
     simplified_transactions = [
         {
-            "date": t["Дата операции"].strftime("%d.%m.%Y") if isinstance(t["Дата операции"], datetime) else t["Дата операции"],
+            "date": (
+                t["Дата операции"].strftime("%d.%m.%Y")
+                if isinstance(t["Дата операции"], datetime)
+                else t["Дата операции"]
+            ),
             "amount": t["Сумма операции"],
             "category": t["Категория"],
             "description": t["Описание"],
@@ -37,6 +43,7 @@ def prepare_json_response(cards_data, top_transactions, currency_rates, stock_pr
         "stock_prices": stock_prices,
     }
     return json.dumps(response, ensure_ascii=False, indent=4)
+
 
 def process_data(data, date_str, currencies, stocks):
     """Обрабатывает данные, фильтрует, рассчитывает расходы и кешбэк, формирует JSON."""
@@ -59,5 +66,3 @@ def process_data(data, date_str, currencies, stocks):
     response = prepare_json_response(cards_data, top_transactions, currency_rates, stock_prices, greeting)
 
     return response
-
-

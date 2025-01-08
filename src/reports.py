@@ -1,13 +1,16 @@
-import os
 import json
 import logging
+import os
 from datetime import datetime, timedelta
 from typing import Optional
+
 import pandas as pd
+
 from src.utils import load_excel
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
 
 # Декоратор для сохранения отчетов в файл
 def save_report(file_name: Optional[str] = None):
@@ -16,17 +19,16 @@ def save_report(file_name: Optional[str] = None):
             result = func(*args, **kwargs)
 
             # Определяем имя файла для сохранения
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            reports_dir = os.path.join(base_dir, "report")
+            if not os.path.exists(reports_dir):
+                os.makedirs(reports_dir)
+
             if not file_name:
-                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                reports_dir = os.path.join(base_dir, "report")
-                if not os.path.exists(reports_dir):
-                    os.makedirs(reports_dir)
-                file_name_to_save = os.path.join(reports_dir, f"report_{func.__name__}_{datetime.now().strftime('%Y%m%d%H%M%S')}.json")
+                file_name_to_save = os.path.join(
+                    reports_dir, f"report_{func.__name__}_{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
+                )
             else:
-                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                reports_dir = os.path.join(base_dir, "report")
-                if not os.path.exists(reports_dir):
-                    os.makedirs(reports_dir)
                 file_name_to_save = os.path.join(reports_dir, file_name)
 
             # Сохраняем отчет в файл
@@ -40,6 +42,7 @@ def save_report(file_name: Optional[str] = None):
 
     return decorator
 
+
 @save_report()
 def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> dict:
     """
@@ -52,17 +55,14 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
     """
     try:
         # Устанавливаем текущую дату, если не передана
-        if date is None:
-            date = datetime.now().strftime("%Y-%m-%d")
-
-        date = datetime.strptime(date, "%Y-%m-%d")
-        three_months_ago = date - timedelta(days=90)
+        current_date = datetime.strptime(date, "%Y-%m-%d") if date else datetime.now()
+        three_months_ago = current_date - timedelta(days=90)
 
         # Фильтруем транзакции по категории и дате
         filtered_data = transactions[
-            (transactions["Категория"] == category) &
-            (transactions["Дата операции"] >= three_months_ago) &
-            (transactions["Дата операции"] <= date)
+            (transactions["Категория"] == category)
+            & (transactions["Дата операции"] >= three_months_ago)
+            & (transactions["Дата операции"] <= current_date)
         ]
 
         # Рассчитываем общую сумму трат
@@ -72,7 +72,7 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
             "category": category,
             "total_spent": round(total_spent, 2),
             "from_date": three_months_ago.strftime("%Y-%m-%d"),
-            "to_date": date.strftime("%Y-%m-%d")
+            "to_date": current_date.strftime("%Y-%m-%d"),
         }
 
         logging.info("Отчет по категории успешно сформирован.")
@@ -81,6 +81,7 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
     except Exception as e:
         logging.error(f"Ошибка при формировании отчета по категории: {e}")
         return {"error": str(e)}
+
 
 if __name__ == "__main__":
     # Загружаем данные из файла
@@ -91,12 +92,9 @@ if __name__ == "__main__":
         exit(1)
 
     # Преобразуем дату операции в формат datetime
-    transactions["Дата операции"] = pd.to_datetime(transactions["Дата операции"], format="%d.%m.%Y %H:%M:%S", errors="coerce")
+    transactions["Дата операции"] = pd.to_datetime(
+        transactions["Дата операции"], format="%d.%m.%Y %H:%M:%S", errors="coerce"
+    )
 
-    # Указываем дату для отчета
-    specific_date = "2021-03-26"
-
-    # Генерируем отчет по категории "Продукты" с указанной датой
-    spending_by_category(transactions, "Фастфуд", specific_date)
-
-
+    # Генерируем отчет по категории "Продукты"
+    spending_by_category(transactions, "Продукты")

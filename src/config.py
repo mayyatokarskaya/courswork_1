@@ -1,6 +1,7 @@
 import json
 import os
 
+
 def load_user_settings(settings_file="user_settings.json"):
     """Загрузка пользовательских настроек из файла JSON."""
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -14,4 +15,5 @@ def load_user_settings(settings_file="user_settings.json"):
         return {}
     except json.JSONDecodeError:
         print("Ошибка в формате JSON файла настроек.")
+
         return {}

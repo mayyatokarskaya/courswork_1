@@ -3,24 +3,17 @@ import json
 import logging
 import pandas as pd
 
-# Устанавливаем конфигурацию для логгирования
+# Устанавливаем конфигурацию для логирования
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-# Определение пути к operations.xlsx
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FILE_PATH = os.path.join(BASE_DIR, "data", "operations.xlsx")
 
-def analyze_cashback_categories(data, year, month):
-    """
-    Анализирует категории повышенного кешбэка за указанный месяц и год.
 
-    :param data: DataFrame с данными транзакций
-    :param year: Год для анализа
-    :param month: Месяц для анализа
-    :return: JSON с суммами кешбэка по категориям
-    """
+def analyze_cashback_categories(data, year, month):
+    """Анализирует категории повышенного кешбэка за указанный месяц и год"""
     try:
-        # Убедимся, что нужные столбцы есть
+        # проверка, что нужные столбцы есть
         required_columns = {"Дата операции", "Категория", "Сумма операции"}
         if not required_columns.issubset(data.columns):
             raise ValueError(f"Отсутствуют обязательные столбцы: {required_columns - set(data.columns)}")
@@ -32,9 +25,7 @@ def analyze_cashback_categories(data, year, month):
         data = data.dropna(subset=["Дата операции"])
 
         # Фильтруем данные по указанным году и месяцу
-        filtered_data = data[
-            (data["Дата операции"].dt.year == year) & (data["Дата операции"].dt.month == month)
-        ]
+        filtered_data = data[(data["Дата операции"].dt.year == year) & (data["Дата операции"].dt.month == month)]
 
         if filtered_data.empty:
             logging.info("Нет данных для указанного месяца и года.")
@@ -42,10 +33,7 @@ def analyze_cashback_categories(data, year, month):
 
         # Группируем суммы кешбэка по категориям
         category_cashback = (
-            filtered_data.groupby("Категория")["Сумма операции"]
-            .sum()
-            .apply(lambda x: x * 0.05)  # Пример: 5% кешбэк на все категории
-            .to_dict()
+            filtered_data.groupby("Категория")["Сумма операции"].sum().apply(lambda x: x * 0.05).to_dict()
         )
 
         logging.info("Анализ категорий завершен.")
@@ -57,28 +45,17 @@ def analyze_cashback_categories(data, year, month):
         return json.dumps({"error": str(e)}, ensure_ascii=False, indent=4)
 
 
-
-
 def find_transfers_to_individuals(file_path=FILE_PATH):
-    """
-    Поиск переводов физическим лицам.
-    """
+    """Поиск переводов физическим лицам"""
     try:
-        # Загружаем данные из Excel
         data = pd.read_excel(file_path)
 
-        # Убедимся, что нужные столбцы есть
         required_columns = {"Категория", "Описание"}
         if not required_columns.issubset(data.columns):
             raise ValueError(f"Отсутствуют обязательные столбцы: {required_columns - set(data.columns)}")
 
-        # Регулярное выражение для поиска имени и инициалов
         regex = r"[А-ЯЁ][а-яё]+ [А-Я]\."
-
-        # Фильтруем транзакции
-        transfers = data[
-            (data["Категория"] == "Переводы") & (data["Описание"].str.contains(regex, na=False))
-        ]
+        transfers = data[(data["Категория"] == "Переводы") & (data["Описание"].str.contains(regex, na=False))]
 
         # Преобразуем результат в JSON
         result = transfers.to_dict(orient="records")
@@ -110,4 +87,3 @@ if __name__ == "__main__":
 transfers_result = find_transfers_to_individuals()
 print("Результат поиска переводов физлицам:")
 print(transfers_result)
-
