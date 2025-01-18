@@ -10,15 +10,23 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FILE_PATH = os.path.join(BASE_DIR, "data", "operations.xlsx")
 
 
-def analyze_cashback_categories(data, year, month):
-    """Анализирует категории повышенного кешбэка за указанный месяц и год"""
+def analyze_cashback_categories(data, year, month, cashback_threshold=100):
+    """
+    Анализирует категории с повышенным кешбэком за указанный месяц и год.
+
+    :param data: DataFrame с данными о транзакциях.
+    :param year: Год для анализа.
+    :param month: Месяц для анализа.
+    :param cashback_threshold: Порог для определения повышенного кешбэка (по умолчанию 100 рублей).
+    :return: JSON с категориями и суммарным кешбэком.
+    """
     try:
-        # проверка, что нужные столбцы есть
-        required_columns = {"Дата операции", "Категория", "Сумма операции"}
+        # Проверка наличия обязательных столбцов
+        required_columns = {"Дата операции", "Категория", "Кэшбэк"}
         if not required_columns.issubset(data.columns):
             raise ValueError(f"Отсутствуют обязательные столбцы: {required_columns - set(data.columns)}")
 
-        # Обработка даты
+        # Преобразуем дату
         data["Дата операции"] = pd.to_datetime(data["Дата операции"], format="%d.%m.%Y %H:%M:%S", errors="coerce")
 
         # Удаляем записи с некорректной датой
@@ -31,14 +39,21 @@ def analyze_cashback_categories(data, year, month):
             logging.info("Нет данных для указанного месяца и года.")
             return json.dumps({}, ensure_ascii=False, indent=4)
 
-        # Группируем суммы кешбэка по категориям
+        # Группируем данные по категориям и суммируем кешбэк
         category_cashback = (
-            filtered_data.groupby("Категория")["Сумма операции"].sum().apply(lambda x: x * 0.05).to_dict()
+            filtered_data.groupby("Категория")["Кэшбэк"]
+            .sum()
+            .reset_index()
         )
 
-        logging.info("Анализ категорий завершен.")
+        # Определяем категории с повышенным кешбэком
+        high_cashback_categories = category_cashback[category_cashback["Кэшбэк"] > cashback_threshold]
 
-        return json.dumps(category_cashback, ensure_ascii=False, indent=4)
+        # Преобразуем результат в словарь
+        result = high_cashback_categories.set_index("Категория")["Кэшбэк"].to_dict()
+
+        logging.info(f"Категории с повышенным кешбэком: {result}")
+        return json.dumps(result, ensure_ascii=False, indent=4)
 
     except Exception as e:
         logging.error(f"Ошибка анализа кешбэка: {e}")
