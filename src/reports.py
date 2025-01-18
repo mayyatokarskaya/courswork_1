@@ -56,7 +56,7 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
         ]
 
         # Рассчитываем общую сумму трат
-        total_spent = filtered_data["Сумма операции"].sum()
+        total_spent = abs(filtered_data["Сумма операции"].sum())
 
         result = {
             "category": category,
@@ -86,5 +86,7 @@ if __name__ == "__main__":
         transactions["Дата операции"], format="%d.%m.%Y %H:%M:%S", errors="coerce"
     )
 
-    # Генерируем отчет по категории "Продукты"
-    spending_by_category(transactions, "Продукты")
+    report_date = "2021-12-31"
+    # Генерируем отчет по категории "РЖД" на указанную дату
+    result = spending_by_category(transactions, category="Супермаркеты", date=report_date)
+
