@@ -11,15 +11,7 @@ FILE_PATH = os.path.join(BASE_DIR, "data", "operations.xlsx")
 
 
 def analyze_cashback_categories(data, year, month, cashback_threshold=100):
-    """
-    Анализирует категории с повышенным кешбэком за указанный месяц и год.
-
-    :param data: DataFrame с данными о транзакциях.
-    :param year: Год для анализа.
-    :param month: Месяц для анализа.
-    :param cashback_threshold: Порог для определения повышенного кешбэка (по умолчанию 100 рублей).
-    :return: JSON с категориями и суммарным кешбэком.
-    """
+    """Анализирует категории с повышенным кешбэком за указанный месяц и год"""
     try:
         # Проверка наличия обязательных столбцов
         required_columns = {"Дата операции", "Категория", "Кэшбэк"}
