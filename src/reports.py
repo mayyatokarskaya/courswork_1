@@ -25,9 +25,7 @@ def save_report(file_name: Optional[str] = None):
                 os.makedirs(reports_dir)
 
             if not file_name:
-                file_name_to_save = os.path.join(
-                    reports_dir, f"report_{func.__name__}_{datetime.now().strftime('%Y%m%d%H%M%S')}.json"
-                )
+                file_name_to_save = os.path.join(reports_dir, f"report_{func.__name__}.json")
             else:
                 file_name_to_save = os.path.join(reports_dir, file_name)
 
@@ -45,16 +43,8 @@ def save_report(file_name: Optional[str] = None):
 
 @save_report()
 def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> dict:
-    """
-    Рассчитывает траты по категории за последние три месяца от переданной даты.
-
-    :param transactions: DataFrame с транзакциями
-    :param category: Название категории
-    :param date: Опциональная дата в формате YYYY-MM-DD. Если не передана, берется текущая дата.
-    :return: Словарь с тратами по категории за последние три месяца
-    """
+    """Рассчитывает траты по категории за последние три месяца от переданной даты"""
     try:
-        # Устанавливаем текущую дату, если не передана
         current_date = datetime.strptime(date, "%Y-%m-%d") if date else datetime.now()
         three_months_ago = current_date - timedelta(days=90)
 
