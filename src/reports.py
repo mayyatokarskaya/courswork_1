@@ -13,21 +13,27 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 
 
 # Декоратор для сохранения отчетов в файл
-def save_report(file_name: Optional[str] = None):
+def save_report(file_name: Optional[str] = None, reports_dir: Optional[str] = None):
     def decorator(func):
         def wrapper(*args, **kwargs):
             result = func(*args, **kwargs)
 
-            # Определяем имя файла для сохранения
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            reports_dir = os.path.join(base_dir, "report")
-            if not os.path.exists(reports_dir):
-                os.makedirs(reports_dir)
-
-            if not file_name:
-                file_name_to_save = os.path.join(reports_dir, f"report_{func.__name__}.json")
+            # Определяем директорию для сохранения
+            if reports_dir is None:
+                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                reports_dir_to_use = os.path.join(base_dir, "report")
             else:
-                file_name_to_save = os.path.join(reports_dir, file_name)
+                reports_dir_to_use = reports_dir
+
+            # Создаем директорию, если она не существует
+            if not os.path.exists(reports_dir_to_use):
+                os.makedirs(reports_dir_to_use)
+
+            # Определяем имя файла для сохранения
+            if not file_name:
+                file_name_to_save = os.path.join(reports_dir_to_use, f"report_{func.__name__}.json")
+            else:
+                file_name_to_save = os.path.join(reports_dir_to_use, file_name)
 
             # Сохраняем отчет в файл
             with open(file_name_to_save, "w", encoding="utf-8") as f:
@@ -40,23 +46,24 @@ def save_report(file_name: Optional[str] = None):
 
     return decorator
 
-
 @save_report()
 def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> dict:
     """Рассчитывает траты по категории за последние три месяца от переданной даты"""
     try:
         current_date = datetime.strptime(date, "%Y-%m-%d") if date else datetime.now()
-        three_months_ago = current_date - timedelta(days=90)
+
+        # Вычисляем дату начала трехмесячного периода (первый день месяца, который был три месяца назад)
+        three_months_ago = (current_date.replace(day=1) - timedelta(days=90)).replace(day=1)
 
         # Фильтруем транзакции по категории и дате
         filtered_data = transactions[
             (transactions["Категория"] == category)
             & (transactions["Дата операции"] >= three_months_ago)
             & (transactions["Дата операции"] <= current_date)
-        ]
+            ]
 
-        # Рассчитываем общую сумму трат
-        total_spent = abs(filtered_data["Сумма операции"].sum())
+        # Рассчитываем общую сумму трат и преобразуем в стандартный тип Python
+        total_spent = abs(filtered_data["Сумма операции"].sum().item())
 
         result = {
             "category": category,
@@ -71,7 +78,6 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
     except Exception as e:
         logging.error(f"Ошибка при формировании отчета по категории: {e}")
         return {"error": str(e)}
-
 
 if __name__ == "__main__":
     # Загружаем данные из файла
