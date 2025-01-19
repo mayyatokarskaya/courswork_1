@@ -20,20 +20,19 @@ def generate_greeting(hour: int) -> str:
 
 def prepare_json_response(cards_data, top_transactions, currency_rates, stock_prices, greeting):
     """Подготавливает JSON-ответ"""
-    # Преобразуем top_transactions в нужный формат
-    simplified_transactions = [
-        {
-            "date": (
-                t["Дата операции"].strftime("%d.%m.%Y")
-                if isinstance(t["Дата операции"], datetime)
-                else t["Дата операции"]
-            ),
+    simplified_transactions = []
+    for t in top_transactions:
+        # Если дата операции - объект datetime, преобразуем в строку
+        date_str = t["Дата операции"]
+        if isinstance(date_str, datetime):  # Если это объект datetime, форматируем
+            date_str = date_str.strftime("%d.%m.%Y")
+
+        simplified_transactions.append({
+            "date": date_str,
             "amount": t["Сумма операции"],
             "category": t["Категория"],
             "description": t["Описание"],
-        }
-        for t in top_transactions
-    ]
+        })
 
     response = {
         "greeting": f'"{greeting}"',
