@@ -9,7 +9,7 @@ import pandas as pd
 from src.utils import load_excel
 
 # Настройка логирования
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+#logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 # Декоратор для сохранения отчетов в файл

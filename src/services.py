@@ -4,14 +4,12 @@ import logging
 import pandas as pd
 
 # Устанавливаем конфигурацию для логирования
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FILE_PATH = os.path.join(BASE_DIR, "data", "operations.xlsx")
 
-
 def analyze_cashback_categories(data, year, month, cashback_threshold=100):
-    """Анализирует категории с повышенным кешбэком за указанный месяц и год"""
     try:
         # Проверка наличия обязательных столбцов
         required_columns = {"Дата операции", "Категория", "Кэшбэк"}
@@ -20,12 +18,15 @@ def analyze_cashback_categories(data, year, month, cashback_threshold=100):
 
         # Преобразуем дату
         data["Дата операции"] = pd.to_datetime(data["Дата операции"], format="%d.%m.%Y %H:%M:%S", errors="coerce")
+        logging.debug(f"После преобразования даты:\n{data['Дата операции']}")
 
         # Удаляем записи с некорректной датой
         data = data.dropna(subset=["Дата операции"])
+        logging.debug(f"После удаления некорректных дат:\n{data}")
 
         # Фильтруем данные по указанным году и месяцу
         filtered_data = data[(data["Дата операции"].dt.year == year) & (data["Дата операции"].dt.month == month)]
+        logging.debug(f"Отфильтрованные данные:\n{filtered_data}")
 
         if filtered_data.empty:
             logging.info("Нет данных для указанного месяца и года.")
@@ -37,9 +38,11 @@ def analyze_cashback_categories(data, year, month, cashback_threshold=100):
             .sum()
             .reset_index()
         )
+        logging.debug(f"Группировка по категориям:\n{category_cashback}")
 
         # Определяем категории с повышенным кешбэком
-        high_cashback_categories = category_cashback[category_cashback["Кэшбэк"] > cashback_threshold]
+        high_cashback_categories = category_cashback[category_cashback["Кэшбэк"] >= cashback_threshold]
+        logging.debug(f"Категории с повышенным кешбэком:\n{high_cashback_categories}")
 
         # Преобразуем результат в словарь
         result = high_cashback_categories.set_index("Категория")["Кэшбэк"].to_dict()
