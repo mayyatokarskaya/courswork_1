@@ -5,11 +5,7 @@ import pandas as pd
 
 
 def load_excel(file_name: str = "operations.xlsx") -> pd.DataFrame:
-    """Загрузка данных из Excel.
-
-    :param file_name: Имя файла Excel.
-    :return: DataFrame с данными из файла.
-    """
+    """Загрузка данных из Excel"""
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     file_path = os.path.join(base_dir, "data", file_name)
 
@@ -20,12 +16,7 @@ def load_excel(file_name: str = "operations.xlsx") -> pd.DataFrame:
 
 
 def filter_data_by_date(dataframe: pd.DataFrame, date_str: str) -> pd.DataFrame:
-    """Фильтрация данных с начала месяца до указанной даты.
-
-    :param dataframe: DataFrame с данными.
-    :param date_str: Дата в формате YYYY-MM-DD.
-    :return: Отфильтрованный DataFrame.
-    """
+    """Фильтрация данных с начала месяца до указанной даты"""
     try:
         input_date = datetime.strptime(date_str, "%Y-%m-%d")
         start_of_month = input_date.replace(day=1)
