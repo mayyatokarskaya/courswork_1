@@ -7,18 +7,14 @@ load_dotenv()
 
 
 def fetch_currency_rates(currencies, base_currency="USD"):
-    """
-    Получение курса валют через API ExchangeRates Data API от apilayer.com.
-    :param currencies: список валют, для которых нужно получить курсы (напр. ["EUR", "RUB"]).
-    :param base_currency: базовая валюта (по умолчанию "USD").
-    :return: список словарей с курсами валют.
-    """
+    """Получение курса валют через API ExchangeRates Data API от apilayer.com"""
     # Получение API-ключа из переменных окружения
     API_KEY = os.getenv("API_KEY")
     if not API_KEY:
         raise ValueError("API_KEY не найден в переменных окружения. Добавьте его в файл .env.")
 
     # URL API от apilayer.com
+
     api_url = f"https://api.apilayer.com/exchangerates_data/latest?base={base_currency}"
 
     # Заголовки с API-ключом
