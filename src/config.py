@@ -3,7 +3,7 @@ import os
 
 
 def load_user_settings(settings_file="user_settings.json"):
-    """Загрузка пользовательских настроек из файла JSON."""
+    """Загрузка пользовательских настроек из файла JSON"""
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     file_path = os.path.join(base_dir, "settings", settings_file)
 

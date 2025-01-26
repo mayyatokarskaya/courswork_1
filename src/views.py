@@ -1,9 +1,8 @@
 import json
 from datetime import datetime
-from src.utils import filter_data_by_date
 
 from src.finance_api_utils import fetch_currency_rates, fetch_stock_prices
-from src.utils import calculate_card_expenses, get_top_transactions
+from src.utils import calculate_card_expenses, filter_data_by_date, get_top_transactions
 
 
 def generate_greeting(hour: int) -> str:
@@ -27,12 +26,14 @@ def prepare_json_response(cards_data, top_transactions, currency_rates, stock_pr
         if isinstance(date_str, datetime):  # Если это объект datetime, форматируем
             date_str = date_str.strftime("%d.%m.%Y")
 
-        simplified_transactions.append({
-            "date": date_str,
-            "amount": t["Сумма операции"],
-            "category": t["Категория"],
-            "description": t["Описание"],
-        })
+        simplified_transactions.append(
+            {
+                "date": date_str,
+                "amount": t["Сумма операции"],
+                "category": t["Категория"],
+                "description": t["Описание"],
+            }
+        )
 
     response = {
         "greeting": f'"{greeting}"',
@@ -45,7 +46,7 @@ def prepare_json_response(cards_data, top_transactions, currency_rates, stock_pr
 
 
 def process_data(data, date_str, currencies, stocks):
-    """Обрабатывает данные, фильтрует, рассчитывает расходы и кешбэк, формирует JSON."""
+    """Обрабатывает данные, фильтрует, рассчитывает расходы и кешбэк, формирует JSON"""
     # Фильтруем данные по дате
     filtered_data = filter_data_by_date(data, date_str)
 

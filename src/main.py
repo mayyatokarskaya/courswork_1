@@ -1,6 +1,6 @@
-from src.views import process_data
-from src.utils import load_excel
 from src.config import load_user_settings
+from src.utils import load_excel
+from src.views import process_data
 
 
 def main():

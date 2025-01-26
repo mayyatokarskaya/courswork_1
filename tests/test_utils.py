@@ -1,7 +1,9 @@
 import os
-import pytest
+
 import pandas as pd
-from src.utils import load_excel, filter_data_by_date, calculate_card_expenses, get_top_transactions
+import pytest
+
+from src.utils import calculate_card_expenses, filter_data_by_date, get_top_transactions, load_excel
 
 
 @pytest.fixture

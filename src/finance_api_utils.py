@@ -14,7 +14,6 @@ def fetch_currency_rates(currencies, base_currency="USD"):
         raise ValueError("API_KEY не найден в переменных окружения. Добавьте его в файл .env.")
 
     # URL API от apilayer.com
-
     api_url = f"https://api.apilayer.com/exchangerates_data/latest?base={base_currency}"
 
     # Заголовки с API-ключом

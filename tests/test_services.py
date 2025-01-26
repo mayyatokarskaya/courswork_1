@@ -3,7 +3,9 @@ import logging
 
 import pandas as pd
 import pytest
+
 from src.services import analyze_cashback_categories, find_transfers_to_individuals
+
 
 # Фикстура для создания временного DataFrame с тестовыми данными
 @pytest.fixture
@@ -16,6 +18,7 @@ def sample_transactions():
     df = pd.DataFrame(data)
     return df
 
+
 # Фикстура для создания временного файла Excel
 @pytest.fixture
 def sample_excel_file(tmpdir):
@@ -27,6 +30,7 @@ def sample_excel_file(tmpdir):
     file_path = tmpdir.join("operations.xlsx")
     df.to_excel(file_path, index=False)
     return file_path
+
 
 # Тесты для функции analyze_cashback_categories
 def test_analyze_cashback_categories(sample_transactions):
@@ -42,6 +46,7 @@ def test_analyze_cashback_categories(sample_transactions):
     assert "РЖД" in result_dict  # Проверка, что категория "РЖД" есть в результате
     assert result_dict["РЖД"] == 50  # Ожидаем, что сумма кэшбэка для "РЖД" будет 50 за октябрь 2023
 
+
 def test_analyze_cashback_categories_no_data(sample_transactions):
     # Вызов функции с месяцем, для которого нет данных
     result = analyze_cashback_categories(sample_transactions, year=2023, month=11)
@@ -49,6 +54,7 @@ def test_analyze_cashback_categories_no_data(sample_transactions):
     # Проверка, что результат пустой
     result_dict = json.loads(result)
     assert result_dict == {}
+
 
 def test_analyze_cashback_categories_invalid_columns():
     # Создаем DataFrame с неправильными столбцами
@@ -66,6 +72,7 @@ def test_analyze_cashback_categories_invalid_columns():
     result_dict = json.loads(result)
     assert "error" in result_dict
 
+
 # Тесты для функции find_transfers_to_individuals
 def test_find_transfers_to_individuals(sample_excel_file):
     # Вызов функции с тестовым файлом
@@ -76,6 +83,7 @@ def test_find_transfers_to_individuals(sample_excel_file):
     assert len(result_list) == 2  # Два перевода физическим лицам
     assert all(item["Категория"] == "Переводы" for item in result_list)
 
+
 def test_find_transfers_to_individuals_no_file():
     # Вызов функции с несуществующим файлом
     result = find_transfers_to_individuals(file_path="nonexistent_file.xlsx")
@@ -83,6 +91,7 @@ def test_find_transfers_to_individuals_no_file():
     # Проверка, что возвращена ошибка
     result_dict = json.loads(result)
     assert "error" in result_dict
+
 
 def test_find_transfers_to_individuals_invalid_columns(tmpdir):
     # Создаем файл с неправильными столбцами

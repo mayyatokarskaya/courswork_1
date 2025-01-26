@@ -1,9 +1,11 @@
-import os
 import json
+import os
+
 import pandas as pd
-from datetime import datetime, timedelta
-from src.reports import save_report, spending_by_category
 import pytest
+
+from src.reports import save_report, spending_by_category
+
 
 # Фикстура для создания временного DataFrame с тестовыми данными
 @pytest.fixture
@@ -17,6 +19,7 @@ def sample_transactions():
     df["Дата операции"] = pd.to_datetime(df["Дата операции"])
     return df
 
+
 def test_spending_by_category(sample_transactions):
     # Вызов функции с тестовыми данными
     result = spending_by_category(sample_transactions, category="РЖД", date="2023-10-15")
@@ -26,6 +29,7 @@ def test_spending_by_category(sample_transactions):
     assert result["from_date"] == "2023-07-01"  # Первый день месяца, который был три месяца назад
     assert result["to_date"] == "2023-10-15"
 
+
 def test_spending_by_category_no_data(sample_transactions):
     # Вызов функции с категорией, которой нет в данных
     result = spending_by_category(sample_transactions, category="Такси", date="2023-10-15")
@@ -33,12 +37,14 @@ def test_spending_by_category_no_data(sample_transactions):
     # Проверка, что сумма трат равна 0
     assert result["total_spent"] == 0.0
 
+
 def test_spending_by_category_invalid_date(sample_transactions):
     # Вызов функции с некорректной датой
     result = spending_by_category(sample_transactions, category="РЖД", date="invalid-date")
 
     # Проверка, что возвращена ошибка
     assert "error" in result
+
 
 # Тесты для декоратора save_report
 def test_save_report(tmpdir, sample_transactions):
@@ -50,9 +56,6 @@ def test_save_report(tmpdir, sample_transactions):
     def dummy_function():
         return {"data": "example"}
 
-    # Вызываем декорированную функцию
-    result = dummy_function()
-
     # Проверяем, что файл создан
     report_file = os.path.join(reports_dir, "test_report.json")
     assert os.path.exists(report_file)
@@ -61,4 +64,3 @@ def test_save_report(tmpdir, sample_transactions):
     with open(report_file, "r", encoding="utf-8") as f:
         file_content = json.load(f)
     assert file_content == {"data": "example"}
-

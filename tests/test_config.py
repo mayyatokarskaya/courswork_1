@@ -1,6 +1,6 @@
-import pytest
 import json
 import os
+
 from src.config import load_user_settings
 
 # Путь к файлу настроек (относительно корня проекта)
@@ -49,6 +49,3 @@ def test_load_user_settings_json_decode_error():
     valid_data = {"username": "testuser", "theme": "dark"}
     with open(settings_file, "w", encoding="utf-8") as f:
         json.dump(valid_data, f)
-
-
-

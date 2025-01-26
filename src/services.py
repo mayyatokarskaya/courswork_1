@@ -1,6 +1,7 @@
-import os
 import json
 import logging
+import os
+
 import pandas as pd
 
 # Устанавливаем конфигурацию для логирования
@@ -8,6 +9,7 @@ logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FILE_PATH = os.path.join(BASE_DIR, "data", "operations.xlsx")
+
 
 def analyze_cashback_categories(data, year, month, cashback_threshold=100):
     try:
@@ -33,11 +35,7 @@ def analyze_cashback_categories(data, year, month, cashback_threshold=100):
             return json.dumps({}, ensure_ascii=False, indent=4)
 
         # Группируем данные по категориям и суммируем кешбэк
-        category_cashback = (
-            filtered_data.groupby("Категория")["Кэшбэк"]
-            .sum()
-            .reset_index()
-        )
+        category_cashback = filtered_data.groupby("Категория")["Кэшбэк"].sum().reset_index()
         logging.debug(f"Группировка по категориям:\n{category_cashback}")
 
         # Определяем категории с повышенным кешбэком

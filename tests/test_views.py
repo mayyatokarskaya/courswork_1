@@ -1,9 +1,12 @@
 import json
+from datetime import datetime
 from unittest.mock import patch
+
 import pandas as pd
 import pytest
-from datetime import datetime
+
 from src.views import generate_greeting, prepare_json_response, process_data
+
 
 @pytest.mark.parametrize(
     "hour, expected_greeting",
@@ -17,6 +20,7 @@ from src.views import generate_greeting, prepare_json_response, process_data
 def test_generate_greeting(hour, expected_greeting):
     assert generate_greeting(hour) == expected_greeting
 
+
 def test_prepare_json_response():
     cards_data = [
         {"card_number": "****1234", "total_expenses": 1000, "cashback": 50},
@@ -24,7 +28,12 @@ def test_prepare_json_response():
     ]
     top_transactions = [
         {"Дата операции": datetime(2023, 10, 1), "Сумма операции": 1000, "Категория": "Еда", "Описание": "Ресторан"},
-        {"Дата операции": datetime(2023, 10, 15), "Сумма операции": 500, "Категория": "Магазин", "Описание": "Продукты"},
+        {
+            "Дата операции": datetime(2023, 10, 15),
+            "Сумма операции": 500,
+            "Категория": "Магазин",
+            "Описание": "Продукты",
+        },
     ]
     currency_rates = {"USD": 74.5, "EUR": 82.3}
     stock_prices = {"AAPL": 175.8, "GOOGL": 2900.2}
@@ -76,7 +85,12 @@ def test_process_data():
     mock_cards_data = [{"card_number": "****1234", "total_expenses": 2500, "cashback": 125}]
     mock_top_transactions = [
         {"Дата операции": datetime(2023, 10, 1), "Сумма операции": 1000, "Категория": "Еда", "Описание": "Ресторан"},
-        {"Дата операции": datetime(2023, 10, 15), "Сумма операции": 500, "Категория": "Магазин", "Описание": "Продукты"},
+        {
+            "Дата операции": datetime(2023, 10, 15),
+            "Сумма операции": 500,
+            "Категория": "Магазин",
+            "Описание": "Продукты",
+        },
     ]
 
     # Мокируем datetime.now(), чтобы вернуть фиктивное время (например, 15:00)

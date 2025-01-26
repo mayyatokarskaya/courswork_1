@@ -1,15 +1,10 @@
 import json
 import logging
 import os
+import pandas as pd
 from datetime import datetime, timedelta
 from typing import Optional
-
-import pandas as pd
-
 from src.utils import load_excel
-
-# Настройка логирования
-#logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 # Декоратор для сохранения отчетов в файл
@@ -46,6 +41,7 @@ def save_report(file_name: Optional[str] = None, reports_dir: Optional[str] = No
 
     return decorator
 
+
 @save_report()
 def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> dict:
     """Рассчитывает траты по категории за последние три месяца от переданной даты"""
@@ -59,8 +55,7 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
         filtered_data = transactions[
             (transactions["Категория"] == category)
             & (transactions["Дата операции"] >= three_months_ago)
-            & (transactions["Дата операции"] <= current_date)
-            ]
+            & (transactions["Дата операции"] <= current_date)]
 
         # Рассчитываем общую сумму трат и преобразуем в стандартный тип Python
         total_spent = abs(filtered_data["Сумма операции"].sum().item())
@@ -79,6 +74,7 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
         logging.error(f"Ошибка при формировании отчета по категории: {e}")
         return {"error": str(e)}
 
+
 if __name__ == "__main__":
     # Загружаем данные из файла
     try:
@@ -95,4 +91,3 @@ if __name__ == "__main__":
     report_date = "2021-12-31"
     # Генерируем отчет по категории "РЖД" на указанную дату
     result = spending_by_category(transactions, category="Супермаркеты", date=report_date)
-
