@@ -1,5 +1,5 @@
+import datetime
 import json
-from datetime import datetime
 
 from src.finance_api_utils import fetch_currency_rates, fetch_stock_prices
 from src.utils import calculate_card_expenses, filter_data_by_date, get_top_transactions
@@ -23,7 +23,7 @@ def prepare_json_response(cards_data, top_transactions, currency_rates, stock_pr
     for t in top_transactions:
         # Если дата операции - объект datetime, преобразуем в строку
         date_str = t["Дата операции"]
-        if isinstance(date_str, datetime):  # Если это объект datetime, форматируем
+        if isinstance(date_str, (datetime.datetime, datetime.date)):  # Если это объект datetime, форматируем
             date_str = date_str.strftime("%d.%m.%Y")
 
         simplified_transactions.append(
