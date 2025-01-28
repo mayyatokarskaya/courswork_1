@@ -7,7 +7,7 @@ load_dotenv()
 
 
 def fetch_currency_rates(currencies, base_currency="USD"):
-    """Получение курса валют через API ExchangeRates Data API от apilayer.com"""
+    """Получение курса валют через API ExchangeRates Data API от apilayer.com."""
     # Получение API-ключа из переменных окружения
     API_KEY = os.getenv("API_KEY")
     if not API_KEY:
@@ -30,10 +30,19 @@ def fetch_currency_rates(currencies, base_currency="USD"):
         # Проверка успешности ответа
         if data.get("success", False):
             rates = data.get("rates", {})
+
+            # Получаем курс рубля (RUB) относительно базовой валюты (например, USD)
+            rub_rate = rates.get("RUB")
+            if not rub_rate:
+                raise ValueError("Курс рубля (RUB) не найден в ответе API.")
+
+            # Конвертируем валюты в рубли
             for currency in currencies:
                 rate = rates.get(currency)
                 if rate:
-                    results.append({"currency": currency, "rate": rate})
+                    # Конвертация: (1 / rate) * rub_rate
+                    converted_rate = (1 / rate) * rub_rate
+                    results.append({"currency": currency, "rate": converted_rate})
                 else:
                     results.append({"currency": currency, "rate": None})
         else:
