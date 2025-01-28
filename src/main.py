@@ -1,3 +1,5 @@
+import os
+
 from src.config import load_user_settings
 from src.utils import load_excel
 from src.views import process_data
@@ -17,7 +19,9 @@ def main():
 
     # Загрузка данных
     try:
-        data = load_excel("../data/operations.xlsx")
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Поднимаемся в корневую папку
+        data_path = os.path.join(base_dir, "data", "operations.xlsx")  # Или operations.json
+        data = load_excel(data_path)
     except FileNotFoundError as e:
         print(e)
         return

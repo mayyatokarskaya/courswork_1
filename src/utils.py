@@ -36,11 +36,7 @@ def filter_data_by_date(dataframe: pd.DataFrame, date_str: str) -> pd.DataFrame:
 
 
 def calculate_card_expenses(transactions: pd.DataFrame) -> list[dict]:
-    """Рассчитывает общую сумму расходов и кешбэк для каждой карты.
-
-    :param transactions: DataFrame с транзакциями.
-    :return: Список словарей с расходами и кешбэком по картам.
-    """
+    """Рассчитывает общую сумму расходов и кешбэк для каждой карты """
     required_columns = ["Номер карты", "Сумма операции"]
     if not all(col in transactions.columns for col in required_columns):
         raise ValueError(f"Отсутствуют необходимые столбцы: {required_columns}")
@@ -57,17 +53,12 @@ def calculate_card_expenses(transactions: pd.DataFrame) -> list[dict]:
 
     cards = transactions.groupby("last_4_digits").agg(total_spent=("Сумма операции", "sum")).reset_index()
 
-    cards["cashback"] = (cards["total_spent"] / 100).round(2)
+    cards["cashback"] = abs((cards["total_spent"] / 100).round(2))
     return cards.to_dict(orient="records")
 
 
 def get_top_transactions(transactions: pd.DataFrame, n: int = 5) -> list[dict]:
-    """Определяет топ-N транзакций по сумме платежа.
-
-    :param transactions: DataFrame с транзакциями.
-    :param n: Количество транзакций в топе.
-    :return: Список словарей с топ-N транзакциями.
-    """
+    """Определяет топ-N транзакций по сумме платежа"""
     required_columns = ["Сумма платежа", "Дата операции"]
     if not all(col in transactions.columns for col in required_columns):
         raise ValueError(f"Отсутствуют необходимые столбцы: {required_columns}")
