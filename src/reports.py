@@ -70,7 +70,7 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
             "to_date": current_date.strftime("%Y-%m-%d"),
         }
 
-        logging.info("Отчет по категории успешно сформирован.")
+        logging.info("Отчет  успешно сформирован.")
         return result
 
     except Exception as e:

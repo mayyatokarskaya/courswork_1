@@ -48,13 +48,15 @@ def test_spending_by_category_invalid_date(sample_transactions):
 
 # Тесты для декоратора save_report
 def test_save_report(tmpdir, sample_transactions):
-    # Временная директория для сохранения отчетов
     reports_dir = tmpdir.mkdir("reports")
 
     # Декорируем функцию для тестирования
     @save_report(file_name="test_report.json", reports_dir=str(reports_dir))
     def dummy_function():
         return {"data": "example"}
+
+    # Вызываем функцию, чтобы сработал декоратор
+    dummy_function()
 
     # Проверяем, что файл создан
     report_file = os.path.join(reports_dir, "test_report.json")
