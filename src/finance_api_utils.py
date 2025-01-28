@@ -8,45 +8,38 @@ load_dotenv()
 
 def fetch_currency_rates(currencies, base_currency="USD"):
     """Получение курса валют через API ExchangeRates Data API от apilayer.com."""
-    # Получение API-ключа из переменных окружения
     API_KEY = os.getenv("API_KEY")
     if not API_KEY:
         raise ValueError("API_KEY не найден в переменных окружения. Добавьте его в файл .env.")
 
-    # URL API от apilayer.com
     api_url = f"https://api.apilayer.com/exchangerates_data/latest?base={base_currency}"
-
-    # Заголовки с API-ключом
     headers = {"apikey": API_KEY}
 
     results = []
 
     try:
-        # Выполнение запроса
         response = requests.get(api_url, headers=headers)
         response.raise_for_status()  # Проверка успешности запроса
         data = response.json()
 
-        # Проверка успешности ответа
         if data.get("success", False):
             rates = data.get("rates", {})
-
-            # Получаем курс рубля (RUB) относительно базовой валюты (например, USD)
             rub_rate = rates.get("RUB")
             if not rub_rate:
                 raise ValueError("Курс рубля (RUB) не найден в ответе API.")
 
-            # Конвертируем валюты в рубли
             for currency in currencies:
                 rate = rates.get(currency)
                 if rate:
-                    # Конвертация: (1 / rate) * rub_rate
                     converted_rate = (1 / rate) * rub_rate
                     results.append({"currency": currency, "rate": converted_rate})
                 else:
                     results.append({"currency": currency, "rate": None})
         else:
             print(f"Ошибка API: {data.get('error', {}).get('info', 'Неизвестная ошибка')}")
+            for currency in currencies:
+                results.append({"currency": currency, "rate": None})
+
     except requests.exceptions.RequestException as e:
         print(f"Ошибка подключения к API: {e}")
         for currency in currencies:
