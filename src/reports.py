@@ -1,9 +1,11 @@
 import json
 import logging
 import os
-import pandas as pd
 from datetime import datetime, timedelta
 from typing import Optional
+
+import pandas as pd
+
 from src.utils import load_excel
 
 
@@ -55,10 +57,11 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
         filtered_data = transactions[
             (transactions["Категория"] == category)
             & (transactions["Дата операции"] >= three_months_ago)
-            & (transactions["Дата операции"] <= current_date)]
+            & (transactions["Дата операции"] <= current_date)
+        ]
 
         # Рассчитываем общую сумму трат и преобразуем в стандартный тип Python
-        total_spent = abs(filtered_data["Сумма операции"].sum().item())
+        total_spent = filtered_data["Сумма операции"].sum().item()
 
         result = {
             "category": category,

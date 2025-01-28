@@ -36,7 +36,7 @@ def filter_data_by_date(dataframe: pd.DataFrame, date_str: str) -> pd.DataFrame:
 
 
 def calculate_card_expenses(transactions: pd.DataFrame) -> list[dict]:
-    """Рассчитывает общую сумму расходов и кешбэк для каждой карты """
+    """Рассчитывает общую сумму расходов и кешбэк для каждой карты"""
     required_columns = ["Номер карты", "Сумма операции"]
     if not all(col in transactions.columns for col in required_columns):
         raise ValueError(f"Отсутствуют необходимые столбцы: {required_columns}")
@@ -52,6 +52,8 @@ def calculate_card_expenses(transactions: pd.DataFrame) -> list[dict]:
     transactions = transactions.dropna(subset=["Сумма операции"])
 
     cards = transactions.groupby("last_4_digits").agg(total_spent=("Сумма операции", "sum")).reset_index()
+
+    cards["total_spent"] = cards["total_spent"].abs()
 
     cards["cashback"] = abs((cards["total_spent"] / 100).round(2))
     return cards.to_dict(orient="records")
