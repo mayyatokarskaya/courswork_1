@@ -1,0 +1,15 @@
+{
+  "user_currencies": [
+    "USD",
+    "EUR",
+    "GBP",
+    "RUB"
+  ],
+  "user_stocks": [
+    "AAPL",
+    "GOOGL",
+    "MSFT",
+    "TSLA",
+    "AMZN"
+  ]
+}
