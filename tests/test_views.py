@@ -27,13 +27,8 @@ def test_prepare_json_response():
         {"card_number": "****5678", "total_expenses": 500, "cashback": 25},
     ]
     top_transactions = [
-        {"Дата операции": datetime(2023, 10, 1), "Сумма операции": 1000, "Категория": "Еда", "Описание": "Ресторан"},
-        {
-            "Дата операции": datetime(2023, 10, 15),
-            "Сумма операции": 500,
-            "Категория": "Магазин",
-            "Описание": "Продукты",
-        },
+        {"Дата операции": "01.10.2023", "Сумма операции": 1000, "Категория": "Еда", "Описание": "Ресторан"},
+        {"Дата операции": "15.10.2023", "Сумма операции": 500, "Категория": "Магазин", "Описание": "Продукты"},
     ]
     currency_rates = {"USD": 74.5, "EUR": 82.3}
     stock_prices = {"AAPL": 175.8, "GOOGL": 2900.2}
@@ -103,9 +98,12 @@ def test_process_data():
                         with patch("src.views.get_top_transactions", return_value=mock_top_transactions):
                             response = process_data(data, date_str, currencies, stocks)
 
+    # Преобразуем JSON-ответ в словарь
+    response_dict = json.loads(response)
+
     # Проверяем результат
-    assert '"Добрый день"' in response
-    assert "cards" in json.loads(response)
-    assert "top_transactions" in json.loads(response)
-    assert "currency_rates" in json.loads(response)
-    assert "stock_prices" in json.loads(response)
+    assert response_dict["greeting"] == '"Добрый день"'
+    assert "cards" in response_dict
+    assert "top_transactions" in response_dict
+    assert "currency_rates" in response_dict
+    assert "stock_prices" in response_dict

@@ -57,7 +57,7 @@ def test_fetch_currency_rates_missing_rub(mock_get):
     mock_get.return_value = mock_response
 
     currencies = ["EUR", "GBP"]
-    with pytest.raises(ValueError, match="Курс рубля \(RUB\) не найден в ответе API."):
+    with pytest.raises(ValueError, match=r"Курс рубля \(RUB\) не найден в ответе API."):
         fetch_currency_rates(currencies)
 
 
